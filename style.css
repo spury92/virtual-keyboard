@@ -1,0 +1,41 @@
+.container {
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+}
+.keyboard {
+  display: inline-block;
+  padding: 5px;
+  border: 2px solid black;
+}
+
+textarea {
+  /* min-width: 600px; */
+  border: 2px solid grey;
+}
+
+.key {
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+  margin: 3px;
+  padding: 3px;
+  float: left;
+  text-align: center;
+  color: #ddecf2;
+  background-color: #3a424e;
+}
+
+.clearfix {
+  clear: both;
+}
+
+.special-keys {
+  background-color: #1c232e;
+  color: #6c6258;
+}
+
+.active {
+  background-color: #5571ee;
+  transition: ease-in;
+}
