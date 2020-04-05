@@ -1,110 +1,182 @@
-const englishLowerKeys = {
-  keys: [
-    96, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, // first row with digits
-    113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 91, 93, 92, //second row starting with q
-    97, 115, 100, 102, 103, 104, 106, 107, 108, 59, 39,  // third row starting with a
-    122, 120, 99, 118, 98, 110, 109, 44, 46, 47, // fourth row starting with z
-  ],
-  breaks: [
-    113, 97, 122
-  ]
-};
-const englishUpperKeys = {
-  keys: [
-    126, 33, 64, 35, 36, 37, 94, 38, 42, 40, 41, 95, 43, // first row with digits
-    81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 123, 125, 124, //second row starting with q
-    65, 83, 68, 70, 71, 72, 74, 75, 76, 58, 34, // third row starting with a
-    90, 88, 67, 86, 66, 78, 77, 60, 62, 63, // fourth row starting with z
-  ],
-  breaks: [
-    81, 65, 90
-  ]
-};
+const defaultLanguage = 'en';
+const textPlaceholder = 'ru' ? 'Введите текст' : 'Enter your text here';
+let CapsActive = false;
+let AltActive = false;
+let ShiftActive = false;
+// Saving language into local storage, to keep it after reloading the page
+try {
+  keyboardLayout = window.localStorage.getItem('layout')
+} catch(error) {
+  let keyboardLayout = defaultLanguage; // default, if not found locally
+  window.localStorage.setItem('layout', keyboardLayout);
+}
 
-const russianLowerKeys = {
-  keys: [
-    1105, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61,
-    1081, 1094, 1091, 1082, 1077, 1085, 1075, 1096, 1097, 1079, 1093, 1098, 92, 
-    1092, 1099, 1074, 1072, 1087, 1088, 1086, 1083, 1076, 1078, 1101,
-    1103, 1095, 1089, 1084, 1080, 1090, 1100, 1073, 1102, 46,
-  ],
-  breaks: [
-    1081, 1092, 1103
-  ]
-};
-const russianUpperKeys = {
-  keys: [
-    1025, 33, 34, 8470, 59, 37, 58, 63, 42, 40, 41, 95, 43,
-    1049, 1062, 1059, 1050, 1045, 1053, 1043, 1064, 1065, 1047, 1061, 1066, 92, 
-    1060, 1067, 1042, 1040, 1055, 1056, 1054, 1051, 1044, 1046, 34,
-    1069, 1071, 1063, 1057, 1052, 1048, 1058, 1068, 1041, 1070, 44
-  ],
-  breaks: [
-    1049, 1060, 1069
-  ]
-};
+const englishLowerKeys = [
+  "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "backspace", "br",
+  "Tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\", "Delete", "br",
+  "CapsLock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "Enter", "br",
+  "Shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "ArrowUp", "Shift", "br",
+  "Control", "Win", "Alt", "Space", "Alt", "Control", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
+];
+const englishUpperKeys = [
+  "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", "Backspace", "br",
+  "Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "{", "}", "|", "Delete", "br",
+  "CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", '"', "Enter", "br",
+  "Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "?", "ArrowUp", "Shift", "br",
+  "Control", "Win", "Alt", "Space", "Alt", "Control", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
+]
 
+const russianLowerKeys = [
+  "ё", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace", "br",
+  "Tab", "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ", "\\", "Delete", "br",
+  "CapsLock", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "Enter", "br",
+  "Shift", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", ".", "ArrowUp", "Shift", "br",
+  "Control", "Win", "Alt", "Space", "Alt", "Control", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
+]
+const russianUpperKeys = [
+  "Ё", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace", "br",
+  "Tab", "Й", "Ц", "У", "К", "Е", "Н", "Г", "Ш", "Щ", "З", "Х", "Ъ", "/", "Delete", "br",
+  "CapsLock", "Ф", "Ы", "В", "А", "П", "Р", "О", "Л", "Д", "Ж", "Э", "Enter", "br",
+  "Shift", "Я", "Ч", "С", "М", "И", "Т", "Ь", "Б", "Ю", ",", "ArrowUp", "Shift", "br",
+  "Control", "Win", "Alt", "Space", "Alt", "Control", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
+]
+const specialKeys = [
+  "Backspace", "Delete", "Tab", "CapsLock", "Enter", "Shift", "ArrowUp", "Shift",
+  "Control", "Win", "Alt", "Space", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
+]
 const layoutsMap = {
   'en': englishLowerKeys,
   'ru': russianLowerKeys
 }
-
-// document.onkeypress = event => {
-//   keyboard.push(event);
-//   console.log(event.shiftKey);
-// };
-
+const layoutsCapsMap = {
+  'en': englishUpperKeys,
+  'ru': russianUpperKeys
+}
+let currentMap = CapsActive ? layoutsCapsMap : layoutsMap;
+const changeLayout = () => {
+  keyboardLayout = 'en' ? 'ru' : 'en';
+  renderKeyboard(currentMap[keyboardLayout]);
+}
+// create keys inside <div class="keys_container">
+const renderKeyboard = (keyboard) => {
+  let keyboardDiv = document.querySelector('.keys_container');
+  keyboardDiv.innerHTML = null; // clear previous keys before rendering new ones
+  for (let key of keyboard) {
+    if (key === 'br') {
+      let lineBreak = document.createElement('br');
+      keyboardDiv.appendChild(lineBreak);
+      continue;
+    }
+    let newKey = document.createElement('button');
+    newKey.setAttribute('type', 'button')
+    newKey.classList.add('key');
+    newKey.classList.add(`key_${key}`);
+    if (specialKeys.includes(key)){
+      newKey.classList.add('special_key') 
+    } 
+    textContent = document.createTextNode(`${key}`)
+    switch(key) {
+      case 'Space':
+        textContent = document.createTextNode(``);
+        break;
+      case 'Control':
+        textContent = document.createTextNode('Ctrl');
+        break;
+      case 'CapsLock':
+        newKey.classList.add('activatable_key')
+        if (CapsActive) {
+          newKey.classList.add('activatable_key--active')
+        }
+        break;
+      case 'language':
+        newKey.classList.add('language_indicator')
+        textContent = document.createTextNode(`${keyboardLayout}`);
+        break;
+    }
+    newKey.appendChild(textContent);
+    keyboardDiv.appendChild(newKey);
+  };
+};
+// create html elements and add them into body
 const renderPageElements = () => {
-  try {
-    keyboardLayout = window.localStorage.getItem('layout')
-  } catch(error) {
-    let keyboardLayout = 'ru' // default, if not found locally
-    window.localStorage.setItem('layout', keyboardLayout);
-  }
-
-  let keyboardContainer = document.createElement('div')
-  keyboardContainer.classList.add('container')
+  let keyboardSection = document.createElement('section')
+  keyboardSection.classList.add('container')
 
   let textArea = document.createElement('textarea');
+  textArea.setAttribute('rows', 15)
+  textArea.setAttribute('placeholder', textPlaceholder)
+  let keyboardDiv = document.createElement('div');
+  keyboardDiv.classList.add('keyboard');
 
-  let newDiv = document.createElement('div');
-  newDiv.classList.add('keyboard');
+  let keysContainer = document.createElement('div');
+  keysContainer.classList.add('keys_container')
 
-  document.body.appendChild(keyboardContainer);
-  keyboardContainer.appendChild(textArea);
-  keyboardContainer.appendChild(newDiv);
+  document.body.appendChild(keyboardSection);
+  keyboardSection.appendChild(textArea);
+  keyboardSection.appendChild(keyboardDiv);
+  keyboardDiv.appendChild(keysContainer);
 
-  renderKeyboard(layoutsMap[keyboardLayout])
+  renderKeyboard(currentMap[keyboardLayout]);
+  document.querySelector('.keyboard').addEventListener('keydown', handleClick);
+  document.querySelector('.language_indicator').addEventListener('click', changeLayout)
+
+  // document.querySelectorAll('.key_Shift').forEach(alt => alt.addEventListener('click', handleClick));
 };
 
-const handleClick = () => {
+
+const handleClick = event => {
   let textArea = document.querySelector('textarea');
-  document.onkeypress = event => {
-    console.log(event);
-    let activeKey = document.querySelector(`.key[data="${event.key}"]`)
-    activeKey.classList.add('active');
-    textArea.value += event.key;
-    window.setTimeout(() => activeKey.classList.remove('active'), 50);
+  let switchAltAndShift = () => {
+    switch(event.type) {
+      case 'keydown':
+        console.log('Alt pressed');
+        AltActive = true
+        break;
+      case 'keyup':
+        console.log('Alt let go');
+        AltActive = false
+        break;
+    }
+  }
+  switch(event.key) {
+    case 'Language':
+      changeLayout();
+      break;
+    case 'Backspace':
+      textArea.value = textArea.value.substring[0, -1];
+      break;
+    case 'Enter':
+      textArea.value += '\n';
+      break;
+    case 'Tab':
+      textArea.value += '    ';
+      break;
+    case 'Control':
+      break;
+    case 'Alt':
+      document.querySelectorAll('.key_Alt').forEach(alt => alt.addEventListener('click', switchAltAndShift));
+      break;
+    case 'Shift':
+      if (AltActive) {
+        changeLayout();
+      }
+      break;
+    case 'CapsLock':
+      CapsActive = !CapsActive;
+      let capsLockKey = document.querySelector('.key_CapsLock');
+      CapsActive
+        ? capsLockKey.classList.add('activatable_key--active')
+        : capsLockKey.classList.remove('activatable_key--active');
+      // const keys = document.querySelectorAll('.keys_container');
+      renderKeyboard(currentMap[keyboardLayout])
+      // for (const key of keys) {
+      //   key.textContent = CapsActive ? key.textContent.toUpperCase() : key.textContent.toLowerCase()
+      // }
+      break;
+    default:
+      console.log(event);
+      textArea.value += (CapsActive | ShiftActive) ? event.key.toUpperCase() : event.key;
   }
 };
-
-const renderKeyboard = (keyboard) => {
-
-  keyboard.keys.forEach(key => {
-    let keyboardDiv = document.querySelector('.keyboard')
-    let out = document.createElement('div');
-    if (keyboard.breaks.includes(key)){
-      out.classList.add('clearfix');
-    } 
-    out.classList.add('key');
-    out.setAttribute('data', String.fromCharCode(key))
-    textContent = document.createTextNode(String.fromCharCode(key))
-    out.appendChild(textContent);
-
-    keyboardDiv.appendChild(out);
-  });
-};
-
-
-renderPageElements();
-document.querySelector('.keyboard').addEventListener('click', handleClick());
+renderPageElements()
+// document.querySelector('.keyboard').oninput = (event) => console.log(event)
