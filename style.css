@@ -5,14 +5,14 @@
   --wider_key: 12%;
 }
 
-.container {
+.section-container {
   margin: 0 auto;
   width: 930px;
   /* max-width: 1200px; */
   display: flex;
   flex-direction: column;
 }
-.keyboard {
+.keyboard_container {
   width: 100%;
   padding: 5px 0;
   background: rgb(175, 175, 175);

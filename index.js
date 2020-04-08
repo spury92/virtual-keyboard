@@ -1,149 +1,27 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable no-restricted-syntax */
 const defaultLanguage = 'en';
-const textPlaceholder = 'ru' ? 'Введите текст' : 'Enter your text here';
+const textPlaceholder = defaultLanguage === 'ru' ? 'Введите текст' : 'Enter your text here';
 let CapsActive = false;
-let AltActive = false;
-let ShiftActive = false;
-// Saving language into local storage, to keep it after reloading the page
-try {
-  keyboardLayout = window.localStorage.getItem('layout')
-} catch(error) {
-  let keyboardLayout = defaultLanguage; // default, if not found locally
-  window.localStorage.setItem('layout', keyboardLayout);
-}
-
-const englishLowerKeys = [
-  "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "backspace", "br",
-  "Tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\", "Delete", "br",
-  "CapsLock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "Enter", "br",
-  "Shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "ArrowUp", "Shift", "br",
-  "Control", "Win", "Alt", "Space", "Alt", "Control", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
+const Layout = window.localStorage.getItem('layout') || 'en';
+const breaks = [
+  'Backspace', 'Backslash', 'Enter', 'ShiftRight',
 ];
-const englishUpperKeys = [
-  "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", "Backspace", "br",
-  "Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "{", "}", "|", "Delete", "br",
-  "CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", '"', "Enter", "br",
-  "Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "?", "ArrowUp", "Shift", "br",
-  "Control", "Win", "Alt", "Space", "Alt", "Control", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
-]
-
-const russianLowerKeys = [
-  "ё", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace", "br",
-  "Tab", "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ", "\\", "Delete", "br",
-  "CapsLock", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "Enter", "br",
-  "Shift", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", ".", "ArrowUp", "Shift", "br",
-  "Control", "Win", "Alt", "Space", "Alt", "Control", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
-]
-const russianUpperKeys = [
-  "Ё", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace", "br",
-  "Tab", "Й", "Ц", "У", "К", "Е", "Н", "Г", "Ш", "Щ", "З", "Х", "Ъ", "/", "Delete", "br",
-  "CapsLock", "Ф", "Ы", "В", "А", "П", "Р", "О", "Л", "Д", "Ж", "Э", "Enter", "br",
-  "Shift", "Я", "Ч", "С", "М", "И", "Т", "Ь", "Б", "Ю", ",", "ArrowUp", "Shift", "br",
-  "Control", "Win", "Alt", "Space", "Alt", "Control", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
-]
 const specialKeys = [
-  "Backspace", "Delete", "Tab", "CapsLock", "Enter", "Shift", "ArrowUp", "Shift",
-  "Control", "Win", "Alt", "Space", "ArrowLeft", "ArrowDown", "ArrowRight", "language"
-]
-const layoutsMap = {
-  'en': englishLowerKeys,
-  'ru': russianLowerKeys
-}
-const layoutsCapsMap = {
-  'en': englishUpperKeys,
-  'ru': russianUpperKeys
-}
-let currentMap = CapsActive ? layoutsCapsMap : layoutsMap;
-const changeLayout = () => {
-  keyboardLayout = 'en' ? 'ru' : 'en';
-  renderKeyboard(currentMap[keyboardLayout]);
-}
-// create keys inside <div class="keys_container">
-const renderKeyboard = (keyboard) => {
-  let keyboardDiv = document.querySelector('.keys_container');
-  keyboardDiv.innerHTML = null; // clear previous keys before rendering new ones
-  for (let key of keyboard) {
-    if (key === 'br') {
-      let lineBreak = document.createElement('br');
-      keyboardDiv.appendChild(lineBreak);
-      continue;
-    }
-    let newKey = document.createElement('button');
-    newKey.setAttribute('type', 'button')
-    newKey.classList.add('key');
-    newKey.classList.add(`key_${key}`);
-    if (specialKeys.includes(key)){
-      newKey.classList.add('special_key') 
-    } 
-    textContent = document.createTextNode(`${key}`)
-    switch(key) {
-      case 'Space':
-        textContent = document.createTextNode(``);
-        break;
-      case 'Control':
-        textContent = document.createTextNode('Ctrl');
-        break;
-      case 'CapsLock':
-        newKey.classList.add('activatable_key')
-        if (CapsActive) {
-          newKey.classList.add('activatable_key--active')
-        }
-        break;
-      case 'language':
-        newKey.classList.add('language_indicator')
-        textContent = document.createTextNode(`${keyboardLayout}`);
-        break;
-    }
-    newKey.appendChild(textContent);
-    keyboardDiv.appendChild(newKey);
-  };
-};
-// create html elements and add them into body
-const renderPageElements = () => {
-  let keyboardSection = document.createElement('section')
-  keyboardSection.classList.add('container')
+  'Backspace', 'Delete',
+  'Tab', 'CapsLock', 'Enter',
+  'ShiftLeft', 'ArrowUp', 'ShiftRight',
+  'ControlLeft', 'AltLeft', 'Space', 'AltRight', 'ControlRight',
+  'ArrowLeft', 'ArrowDown', 'ArrowRight', 'language',
+];
 
-  let textArea = document.createElement('textarea');
-  textArea.setAttribute('rows', 15)
-  textArea.setAttribute('placeholder', textPlaceholder)
-  let keyboardDiv = document.createElement('div');
-  keyboardDiv.classList.add('keyboard');
-
-  let keysContainer = document.createElement('div');
-  keysContainer.classList.add('keys_container')
-
-  document.body.appendChild(keyboardSection);
-  keyboardSection.appendChild(textArea);
-  keyboardSection.appendChild(keyboardDiv);
-  keyboardDiv.appendChild(keysContainer);
-
-  renderKeyboard(currentMap[keyboardLayout]);
-  document.querySelector('.keyboard').addEventListener('keydown', handleClick);
-  document.querySelector('.language_indicator').addEventListener('click', changeLayout)
-
-  // document.querySelectorAll('.key_Shift').forEach(alt => alt.addEventListener('click', handleClick));
-};
-
-
-const handleClick = event => {
-  let textArea = document.querySelector('textarea');
-  let switchAltAndShift = () => {
-    switch(event.type) {
-      case 'keydown':
-        console.log('Alt pressed');
-        AltActive = true
-        break;
-      case 'keyup':
-        console.log('Alt let go');
-        AltActive = false
-        break;
-    }
-  }
-  switch(event.key) {
+const handleClick = (event) => {
+  const textArea = document.querySelector('textarea');
+  switch (event.key) {
     case 'Language':
-      changeLayout();
       break;
     case 'Backspace':
-      textArea.value = textArea.value.substring[0, -1];
+      textArea.value = textArea.value.substring(0, -1);
       break;
     case 'Enter':
       textArea.value += '\n';
@@ -153,30 +31,275 @@ const handleClick = event => {
       break;
     case 'Control':
       break;
-    case 'Alt':
-      document.querySelectorAll('.key_Alt').forEach(alt => alt.addEventListener('click', switchAltAndShift));
-      break;
-    case 'Shift':
-      if (AltActive) {
-        changeLayout();
-      }
-      break;
+    // case 'Alt':
+    //   document.querySelectorAll('.key_Alt').forEach((alt) => alt.addEventListener('click', switchAltAndShift));
+    //   break;
     case 'CapsLock':
       CapsActive = !CapsActive;
-      let capsLockKey = document.querySelector('.key_CapsLock');
-      CapsActive
-        ? capsLockKey.classList.add('activatable_key--active')
-        : capsLockKey.classList.remove('activatable_key--active');
-      // const keys = document.querySelectorAll('.keys_container');
-      renderKeyboard(currentMap[keyboardLayout])
-      // for (const key of keys) {
-      //   key.textContent = CapsActive ? key.textContent.toUpperCase() : key.textContent.toLowerCase()
-      // }
+      if (CapsActive) {
+        document.querySelector('.key_CapsLock').classList.add('activatable_key--active');
+      } else {
+        document.querySelector('.key_CapsLock').classList.remove('activatable_key--active');
+      }
       break;
     default:
-      console.log(event);
-      textArea.value += (CapsActive | ShiftActive) ? event.key.toUpperCase() : event.key;
+      // console.log(event);
+      textArea.value += (CapsActive || event.ShiftLeft || event.ShiftRight) ? event.key.toUpperCase() : event.key;
   }
 };
-renderPageElements()
-// document.querySelector('.keyboard').oninput = (event) => console.log(event)
+
+// create keys inside <div class="keys_container">
+const renderKeyboard = (keyboard, layout) => {
+  const keyboardDiv = document.querySelector('.keys_container');
+  keyboardDiv.innerHTML = null; // clear previous keys before rendering new ones
+  const iter = keyboard.entries;
+  for (const key of iter) {
+    if (!breaks.includes(key)) {
+      const newKey = document.createElement('button');
+      newKey.setAttribute('type', 'button');
+      newKey.classList.add('key');
+      newKey.classList.add(`key_${key}`);
+      if (specialKeys.includes(key)) {
+        newKey.classList.add('special_key');
+      }
+      const textContent = document.createTextNode(`${key[layout]}`);
+      if (key === 'CapsLock') {
+        newKey.classList.add('activatable_key');
+        if (CapsActive) {
+          newKey.classList.add('activatable_key--active');
+        }
+      }
+      newKey.appendChild(textContent);
+      keyboardDiv.appendChild(newKey);
+    } else {
+      keyboardDiv.appendChild(document.createElement('br'));
+    }
+  }
+};
+// create html elements and add them into body
+const renderPageElements = (keyboard) => {
+  const keyboardSection = document.createElement('section');
+  keyboardSection.classList.add('container');
+
+  const textArea = document.createElement('textarea');
+  textArea.setAttribute('rows', 15);
+  textArea.setAttribute('placeholder', textPlaceholder);
+  const keyboardDiv = document.createElement('div');
+  keyboardDiv.classList.add('keyboard');
+
+  const keysContainer = document.createElement('div');
+  keysContainer.classList.add('keys_container');
+
+  document.body.appendChild(keyboardSection);
+  keyboardSection.appendChild(textArea);
+  keyboardSection.appendChild(keyboardDiv);
+  keyboardDiv.appendChild(keysContainer);
+
+  renderKeyboard(keyboard, Layout);
+  document.querySelector('.keyboard').addEventListener('keydown', handleClick);
+};
+
+// renderPageElements();
+const Keyboard = {
+  elements: {
+    main: null,
+    textArea: null,
+    keyboardContainer: null,
+    keysContainer: null,
+    keys: {
+      Backquote: {
+        en: '`', ru: 'ё', enUp: '~', ruUp: 'Ё',
+      },
+      Digit1: {
+        en: '1', ru: '1', enUp: '!', ruUp: '!',
+      },
+      Digit2: {
+        en: '2', ru: '2', enUp: '@', ruUp: '"',
+      },
+      Digit3: {
+        en: '3', ru: '3', enUp: '#', ruUp: '№',
+      },
+      Digit4: {
+        en: '4', ru: '4', enUp: '$', ruUp: ';',
+      },
+      Digit5: {
+        en: '5', ru: '5', enUp: '%', ruUp: '%',
+      },
+      Digit6: {
+        en: '6', ru: '6', enUp: '^', ruUp: ':',
+      },
+      Digit7: {
+        en: '7', ru: '7', enUp: '&', ruUp: '?',
+      },
+      Digit8: {
+        en: '8', ru: '8', enUp: '*', ruUp: '*',
+      },
+      Digit9: {
+        en: '9', ru: '9', enUp: '(', ruUp: '(',
+      },
+      Digit0: {
+        en: '0', ru: '0', enUp: ')', ruUp: ')',
+      },
+      Minus: {
+        en: '-', ru: '-', enUp: '_', ruUp: '_',
+      },
+      Equal: {
+        en: '=', ru: '=', enUp: '+', ruUp: '+',
+      },
+      Backspace: { en: 'Backspace', ru: 'Backspace' },
+      Tab: { en: 'Tab', ru: 'Tab' },
+      KeyQ: {
+        en: 'q', ru: 'й', enUp: '~', ruUp: 'Ё',
+      },
+      KeyW: {
+        en: 'w', ru: 'ц', enUp: '~', ruUp: 'Ё',
+      },
+      KeyE: {
+        en: 'e', ru: 'у', enUp: '~', ruUp: 'Ё',
+      },
+      KeyR: {
+        en: 'r', ru: 'к', enUp: '~', ruUp: 'Ё',
+      },
+      KeyT: {
+        en: 't', ru: 'е', enUp: '~', ruUp: 'Ё',
+      },
+      KeyY: {
+        en: 'y', ru: 'н', enUp: '~', ruUp: 'Ё',
+      },
+      KeyU: {
+        en: 'u', ru: 'г', enUp: '~', ruUp: 'Ё',
+      },
+      KeyI: {
+        en: 'i', ru: 'ш', enUp: '~', ruUp: 'Ё',
+      },
+      KeyO: {
+        en: 'o', ru: 'щ', enUp: '~', ruUp: 'Ё',
+      },
+      KeyP: {
+        en: 'p', ru: 'з', enUp: '~', ruUp: 'Ё',
+      },
+      BracketLeft: {
+        en: '[', ru: 'х', enUp: '~', ruUp: 'Ё',
+      },
+      BracketRight: {
+        en: ']', ru: 'ъ', enUp: '~', ruUp: 'Ё',
+      },
+      Backslash: {
+        en: '\\', ru: '\\', enUp: '~', ruUp: 'Ё',
+      },
+      CapsLock: { en: 'CapsLock', ru: 'CapsLock' },
+      KeyA: {
+        en: 'a', ru: 'ф', enUp: '~', ruUp: 'Ё',
+      },
+      KeyS: {
+        en: 's', ru: 'ы', enUp: '~', ruUp: 'Ё',
+      },
+      KeyD: {
+        en: 'd', ru: 'в', enUp: '~', ruUp: 'Ё',
+      },
+      KeyF: {
+        en: 'f', ru: 'а', enUp: '~', ruUp: 'Ё',
+      },
+      KeyG: {
+        en: 'g', ru: 'п', enUp: '~', ruUp: 'Ё',
+      },
+      KeyH: {
+        en: 'h', ru: 'р', enUp: '~', ruUp: 'Ё',
+      },
+      KeyJ: {
+        en: 'j', ru: 'о', enUp: '~', ruUp: 'Ё',
+      },
+      KeyK: {
+        en: 'k', ru: 'л', enUp: '~', ruUp: 'Ё',
+      },
+      KeyL: {
+        en: 'l', ru: 'д', enUp: '~', ruUp: 'Ё',
+      },
+      Semicolon: {
+        en: ';', ru: 'ж', enUp: '~', ruUp: 'Ё',
+      },
+      Quote: {
+        en: "'", ru: 'э', enUp: '~', ruUp: 'Ё',
+      },
+      Enter: { en: '\n', ru: '\n' },
+      ShiftLeft: { en: 'Shift', ru: 'Shift' },
+      KeyZ: {
+        en: 'z', ru: 'я', enUp: '~', ruUp: 'Ё',
+      },
+      KeyX: {
+        en: 'x', ru: 'ч', enUp: '~', ruUp: 'Ё',
+      },
+      KeyC: {
+        en: 'c', ru: 'с', enUp: '~', ruUp: 'Ё',
+      },
+      KeyV: {
+        en: 'v', ru: 'м', enUp: '~', ruUp: 'Ё',
+      },
+      KeyB: {
+        en: 'b', ru: 'и', enUp: '~', ruUp: 'Ё',
+      },
+      KeyN: {
+        en: 'n', ru: 'т', enUp: '~', ruUp: 'Ё',
+      },
+      KeyM: {
+        en: 'm', ru: 'ь', enUp: '~', ruUp: 'Ё',
+      },
+      Comma: {
+        en: ',', ru: 'б', enUp: '~', ruUp: 'Ё',
+      },
+      Period: {
+        en: '.', ru: 'ю', enUp: '~', ruUp: 'Ё',
+      },
+      Slash: {
+        en: '/', ru: '.', enUp: '~', ruUp: 'Ё',
+      },
+      ShiftRight: { en: 'Shift', ru: 'Shift' },
+      ControlLeft: { en: 'Control', ru: 'Control' },
+      Space: { en: ' ', ru: ' ' },
+      AltLeft: { en: 'Alt', ru: 'Alt' },
+      ControlRight: { en: 'Control', ru: 'Control' },
+    }
+  },
+  eventHandlers: {
+    oninput: null,
+    onclose: null,
+  },
+  properties: {
+    value: '',
+    capsLock: false,
+  },
+
+  init() {
+    // Create main elements
+    this.elements.main = document.createElement('section');
+    this.elements.textArea = document.createElement('textarea');
+    this.elements.keyboardContainer = document.createElement('div');
+    this.elements.keysContainer = document.createElement('div')
+
+    // Setup main elements
+    this.elements.main.classList.add('section-container');
+    this.elements.textArea.classList.add('textarea');
+    this.elements.keyboardContainer.classList.add('keyboard_container');
+    this.elements.keysContainer.classList.add('keys_container');
+
+    this.elements.keys = this.elements.keysContainer.querySelectorAll(".keys_container");
+
+    // Add to DOM
+    this.elements.main.appendChild(this.elements.keysContainer);
+    document.body.appendChild(this.elements.main);
+
+    // Automatically use keyboard for elements with .use-keyboard-input
+    document.querySelectorAll(".use-keyboard-input").forEach(element => {
+        element.addEventListener("focus", () => {
+            this.open(element.value, currentValue => {
+                element.value = currentValue;
+            });
+        });
+    });
+},
+  },
+  createKeys() {
+
+  },
+};
+// renderPageElements(Keyboard);
