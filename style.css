@@ -2,17 +2,17 @@
   --key_width: 6%;
   --key_height: 25%;
   --max_width: 50px;
-  --wider_key: 12%;
+  --key--wide: 9%;
 }
 
-.container {
+.section-container {
   margin: 0 auto;
   width: 930px;
   /* max-width: 1200px; */
   display: flex;
   flex-direction: column;
 }
-.keyboard {
+.keyboard_container {
   width: 100%;
   padding: 5px 0;
   background: rgb(175, 175, 175);
@@ -33,7 +33,6 @@ textarea {
 
 .key {
   min-width: var(--key_width);
-  /* width: fit-content; */
   position: relative;
   height: 50px;
   cursor: pointer;
@@ -49,21 +48,12 @@ textarea {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.key_Backspace,
-.key_CapsLock,
-.key_Shift,
-.key_Enter
+.key--wide
 {
-  width: var(--wider_key);
+  width: var(--key--wide);
 }
-.key_Space {
-  width: calc(var(--wider_key) * 3);
-}
-.key_ArrowLeft,
-.key_ArrowRight,
-.key_ArrowUp,
-.key_ArrowDown {
-  width: 7.5%;
+.key--space {
+  width: calc(var(--key--wide) * 2);
 }
 
 .key:active {
