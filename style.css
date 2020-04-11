@@ -1,6 +1,5 @@
 :root {
   --key_width: 6%;
-  /* --key_height: calc(var(--key_width) / 9 * 2); */
   --max_width: 50px;
   --key--wide: 9%;
 }
@@ -8,7 +7,7 @@
 .section-container {
   margin: 0 auto;
   /* max-width: calc(var(--body-width) * 1); */
-  max-width: 1000px;
+  max-width: 1200px;
   display: flex;
   flex-direction: column;
 }
@@ -22,7 +21,7 @@
 .keys_container {
   margin: 0 auto;
   max-width: 95%;
-  min-width: 900px;
+  min-width: 1000px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -41,12 +40,12 @@ textarea {
   border: 0;
   border-radius: 5px;
   margin: 3px;
-  /* padding: 3px; */
+  font-size: larger;
   float: left;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #ddecf2;
+  color: #fff;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -55,10 +54,10 @@ textarea {
   min-width: var(--key--wide);
 }
 .key--space {
-  width: calc(var(--key--wide) * 3);
+  width: calc(var(--key--wide) * 2);
 }
 
-.key:active {
+.active {
   background-color: rgba(0, 0, 0, 0.7);
   /* transition: ease-out; */
   animation: ease-in;
