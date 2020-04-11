@@ -15,5 +15,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'linebreak-style': ["error", (os.platform === "win32" ? "windows" : "unix")],
   },
 };
