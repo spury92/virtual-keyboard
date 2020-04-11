@@ -249,8 +249,8 @@ const Keyboard = {
       switch (code) {
         case 'Backspace':
           keyElement.addEventListener('click', () => {
-            const { length } = this.properties.value;
-            document.querySelector('textarea').value = this.properties.value.substring(0, length - 1);
+            const { length } = document.querySelector('textarea').value;
+            document.querySelector('textarea').value = document.querySelector('textarea').value.substring(0, length - 1);
             // this.oninputHandler();
           });
           break;
@@ -284,35 +284,32 @@ const Keyboard = {
           keyElement.addEventListener('keydown', this.toggleCapsLock);
           keyElement.addEventListener('keydown', this.toggleLayout);
           break;
-        // case 'ControlLeft' || 'ControlRight':
-        //   keyElement.addEventListener('click', () => {
-        //     this.close();
-        //     this.triggerEvent('oninput');
-        //   });
-        //   break;
-        // case 'AltLeft' || 'AltRight':
-        //   keyElement.setAttribute('click', () => {
-        //     keyElement.preventDefault();
-        //   });
-        //   break;
-        // case 'ArrowUp' || 'ArrowLeft' || 'ArrowDown' || 'ArrowRight':
-        //   keyElement.addEventListener('click', () => {
-        //     this.close();
-        //   });
-        //   break;
+        case 'ControlLeft' || 'ControlRight':
+          keyElement.addEventListener('click', () => {
+            this.close();
+          });
+          break;
+        case 'AltLeft' || 'AltRight':
+          keyElement.setAttribute('click', () => {
+            keyElement.preventDefault();
+          });
+          break;
+        case 'ArrowUp' || 'ArrowLeft' || 'ArrowDown' || 'ArrowRight':
+          keyElement.addEventListener('click', () => {
+            this.close();
+          });
+          break;
 
         default:
           keyElement.addEventListener('keydown', () => {
             document.querySelector('textarea').value += this.properties.capsLock
               ? this.keysMap[code][`${this.properties.layout}`].toUpperCase()
               : this.keysMap[code][`${this.properties.layout}`].toLowerCase();
-            this.oninputHandler();
           });
           keyElement.addEventListener('mousedown', () => {
             document.querySelector('textarea').value += this.properties.capsLock
               ? this.keysMap[code][`${this.properties.layout}`].toUpperCase()
               : this.keysMap[code][`${this.properties.layout}`].toLowerCase();
-            this.oninputHandler();
           });
           break;
       }
