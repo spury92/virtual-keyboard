@@ -1,26 +1,28 @@
 :root {
   --key_width: 6%;
-  --key_height: 25%;
+  /* --key_height: calc(var(--key_width) / 9 * 2); */
   --max_width: 50px;
   --key--wide: 9%;
 }
 
 .section-container {
   margin: 0 auto;
-  width: 930px;
-  /* max-width: 1200px; */
+  /* max-width: calc(var(--body-width) * 1); */
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
 }
 .keyboard_container {
-  width: 100%;
-  padding: 5px 0;
+  padding: 5px auto;
   background: rgb(175, 175, 175);
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
   user-select: none;
   transition: bottom 0.4s;
 }
 .keys_container {
+  margin: 0 auto;
+  max-width: 95%;
+  min-width: 900px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -34,12 +36,12 @@ textarea {
 .key {
   min-width: var(--key_width);
   position: relative;
-  height: 50px;
+  min-height: 50px;
   cursor: pointer;
   border: 0;
   border-radius: 5px;
   margin: 3px;
-  padding: 3px;
+  /* padding: 3px; */
   float: left;
   display: inline-flex;
   align-items: center;
@@ -50,16 +52,20 @@ textarea {
 
 .key--wide
 {
-  width: var(--key--wide);
+  min-width: var(--key--wide);
 }
 .key--space {
-  width: calc(var(--key--wide) * 2);
+  width: calc(var(--key--wide) * 3);
 }
 
 .key:active {
   background-color: rgba(0, 0, 0, 0.7);
-  border: 0;
-  transition: ease-out;
+  /* transition: ease-out; */
+  animation: ease-in;
+  animation-delay: 50ms;
+}
+.key:focus {
+  outline: none;
 }
 
 .special_key {
