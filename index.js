@@ -244,20 +244,20 @@ const Keyboard = {
         keyElement.textContent = code;
       } else {
         keyElement.textContent = this.keysMap[code][`${this.properties.layout}`];
-        this.triggerEvent('oninput');
+        // this.triggerEvent('oninput');
       }
       switch (code) {
         case 'Backspace':
           keyElement.addEventListener('click', () => {
             const { length } = this.properties.value;
-            this.properties.value = this.properties.value.substring(0, length - 1);
-            this.triggerEvent('oninput');
+            document.querySelector('textarea').value = this.properties.value.substring(0, length - 1);
+            // this.oninputHandler();
           });
           break;
         case 'Tab':
           keyElement.addEventListener('click', () => {
-            this.properties.value += '    ';
-            this.triggerEvent('oninput');
+            document.querySelector('textarea').value += '    ';
+            // this.oninputHandler();
           });
           break;
         case 'CapsLock':
@@ -269,14 +269,14 @@ const Keyboard = {
           break;
         case 'Enter':
           keyElement.addEventListener('click', () => {
-            this.properties.value += '/n';
-            this.triggerEvent('oninput');
+            document.querySelector('textarea').value += '\n';
+            // this.oninputHandler();
           });
           break;
         case 'Space':
           keyElement.addEventListener('click', () => {
-            this.properties.value += ' ';
-            this.triggerEvent('oninput');
+            document.querySelector('textarea').value += ' ';
+            // this.oninputHandler();
           });
           break;
         case 'ShiftLeft' || 'ShiftRight':
@@ -290,29 +290,29 @@ const Keyboard = {
         //     this.triggerEvent('oninput');
         //   });
         //   break;
-        case 'AltLeft' || 'AltRight':
-          keyElement.setAttribute('click', () => {
-            keyElement.preventDefault();
-          });
-          break;
-        case 'ArrowUp' || 'ArrowLeft' || 'ArrowDown' || 'ArrowRight':
-          keyElement.addEventListener('click', () => {
-            this.close();
-          });
-          break;
+        // case 'AltLeft' || 'AltRight':
+        //   keyElement.setAttribute('click', () => {
+        //     keyElement.preventDefault();
+        //   });
+        //   break;
+        // case 'ArrowUp' || 'ArrowLeft' || 'ArrowDown' || 'ArrowRight':
+        //   keyElement.addEventListener('click', () => {
+        //     this.close();
+        //   });
+        //   break;
 
         default:
           keyElement.addEventListener('keydown', () => {
-            this.properties.value += this.properties.capsLock
+            document.querySelector('textarea').value += this.properties.capsLock
               ? this.keysMap[code][`${this.properties.layout}`].toUpperCase()
               : this.keysMap[code][`${this.properties.layout}`].toLowerCase();
-            this.triggerEvent('oninput');
+            this.oninputHandler();
           });
           keyElement.addEventListener('mousedown', () => {
-            this.properties.value += this.properties.capsLock
+            document.querySelector('textarea').value += this.properties.capsLock
               ? this.keysMap[code][`${this.properties.layout}`].toUpperCase()
               : this.keysMap[code][`${this.properties.layout}`].toLowerCase();
-            this.triggerEvent('oninput');
+            this.oninputHandler();
           });
           break;
       }
@@ -348,7 +348,7 @@ const Keyboard = {
     }
   },
   oninputHandler() {
-    this.elements.textArea.setAttribute('value', this.properties.value);
+    document.querySelector('textarea').setAttribute('value', this.properties.value);
   },
 };
 
