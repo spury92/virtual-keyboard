@@ -13,7 +13,7 @@ const Keyboard = {
     shiftKey: false,
     defaultLang: 'ru',
     layout: '',
-    textPlaceholder: 'Введите текст.',
+    textPlaceholder: '',
   },
   keysMap: {
     Backquote: {
@@ -185,6 +185,9 @@ const Keyboard = {
     'ControlLeft', 'AltLeft', 'Space', 'AltRight', 'ControlRight',
     'ArrowLeft', 'ArrowDown', 'ArrowRight',
   ],
+  switchKeys: [
+    'Backquote', 'Comma', 'Period', 'BracketLeft', 'BracketRight', 'Semicolon', 'Quote'
+  ],
   init() {
     // Create main elements
     this.elements.main = document.createElement('section');
@@ -199,8 +202,8 @@ const Keyboard = {
       window.localStorage.setItem('layout', this.properties.layout);
     }
     this.properties.textPlaceholder = this.properties.layout === 'en'
-      ? 'Enter your text'
-      : 'Введите текст';
+      ? 'Enter your text.\nShift switches keyboard into shift mode on simple click.\nLanguage doesn`t change at all'
+      : 'Введите текст.\nShift переключает клавиатуру по нажатию.\nЯзык пока не переключается никак';
 
     // Setup main elements
     this.elements.main.classList.add('section-container');
@@ -271,10 +274,8 @@ const Keyboard = {
           });
           break;
         case 'ShiftLeft' || 'ShiftRight':
-          keyElement.addEventListener('click', this.toggleLayout);
-          keyElement.addEventListener('keydown', this.toggleLayout);
           keyElement.addEventListener('keydown', this.toggleShift);
-          keyElement.addEventListener('keyup', this.toggleShift);
+          keyElement.addEventListener('click', this.toggleShift);
           break;
         // case 'ControlLeft' || 'ControlRight':
         //   keyElement.addEventListener('click', () => {
@@ -283,11 +284,11 @@ const Keyboard = {
         //   break;
         case 'AltLeft' || 'AltRight':
           keyElement.addEventListener('keydown', () => {
-            console.log(this.properties.altKey)
+            // console.log(this.properties.altKey)
             this.properties.altKey = true;
           });
           keyElement.addEventListener('keyup', () => {
-            console.log(this.properties.altKey)
+            // console.log(this.properties.altKey)
             this.properties.altKey = false;
           });
           break;
@@ -306,31 +307,44 @@ const Keyboard = {
     return fragment;
   },
   toggleCapsLock() {
-    // event.preventDefault();
     const keyMap = Keyboard.keysMap;
     Keyboard.properties.capsLock = !Keyboard.properties.capsLock;
     for (const key of Keyboard.keyboardCodes) {
       const selectedKey = document.querySelector(`.${key}`);
-      if (key.startsWith('Key')) {
+      if (Keyboard.properties.layout === 'ru') {
+        if (key.startsWith('Key') || Keyboard.switchKeys.includes(key)) {
+          selectedKey.textContent = Keyboard.properties.capsLock
+            ? keyMap[key][`${Keyboard.properties.layout}Up`]
+            : keyMap[key][`${Keyboard.properties.layout}`];
+        }
+      } else {
+        if (key.startsWith('Key') || !Keyboard.switchKeys.includes(key)) {
         selectedKey.textContent = Keyboard.properties.capsLock
           ? keyMap[key][`${Keyboard.properties.layout}Up`]
           : keyMap[key][`${Keyboard.properties.layout}`];
+        }
       }
     }
   },
-  toggleShift(event) {
-    event.preventDefault();
-    Keyboard.properties.shiftKey = !Keyboard.properties.shiftKey
+  toggleShift() {
     const keyMap = Keyboard.keysMap;
+    Keyboard.properties.shiftKey = !Keyboard.properties.shiftKey
     for (const key of Keyboard.keyboardCodes) {
       const selectedKey = document.querySelector(`.${key}`);
-      if (Keyboard.specialKeys.indexOf(key) === -1) {
-        if (Keyboard.properties.shiftKey && !Keyboard.properties.capsLock) {
-          selectedKey.textContent = keyMap[key][`${Keyboard.properties.layout}Up`]
-        } else if (Keyboard.properties.shiftKey && Keyboard.properties.capsLock) {
-        selectedKey.textContent = keyMap[key][`${Keyboard.properties.layout}`];
+      if (Keyboard.properties.layout === 'ru') {
+        if (!Keyboard.specialKeys.includes(key) || Keyboard.switchKeys.includes(key)) {
+          selectedKey.textContent = Keyboard.properties.shiftKey
+            ? keyMap[key][`${Keyboard.properties.layout}Up`]
+            : keyMap[key][`${Keyboard.properties.layout}`];
+        }
+      } else {
+        if (!Keyboard.specialKeys.includes(key)) {
+        selectedKey.textContent = Keyboard.properties.shiftKey
+          ? keyMap[key][`${Keyboard.properties.layout}Up`]
+          : keyMap[key][`${Keyboard.properties.layout}`];
         }
       }
+      // Keyboard.toggleCapsLock();
     }
   },
   removeChar(event) {
@@ -339,23 +353,22 @@ const Keyboard = {
     document.querySelector('textarea').value = value.substring(0, value.length - 1);
   },
   handleClick(event) {
+    // let currentKey = document.querySelector(`.${event.target.classList[1]}`);
+    event.target.classList.add('active');
     // event.preventDefault();
-    // console.log(event.target.classList[1])
+    // console.log(event.target.classList)
     // console.log(event)
     if (!Keyboard.specialKeys.includes(event.target.classList[1])) {
-      let currentKey = document.querySelector(`.${event.target.classList[1]}`);
-      currentKey.classList.add('active');
-      // console.log(currentKey);
-      document.querySelector('textarea').value += currentKey.textContent;
-      currentKey.classList.remove('active');
+      document.querySelector('textarea').value += event.target.textContent;
     };
+    event.target.classList.remove('active');
   },
   toggleLayout(event) {
-    event.preventDefault();
+    // event.preventDefault();
     if (event.altKey) {
       Keyboard.properties.layout = Keyboard.properties.layout === 'ru' ? 'en' : 'ru';
       window.localStorage.layout = Keyboard.properties.layout;
-      console.log(Keyboard.properties.layout)
+      // console.log(Keyboard.properties.layout)
       this.toggleCapsLock();
     }
   },

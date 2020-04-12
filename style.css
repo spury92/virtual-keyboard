@@ -59,9 +59,8 @@ textarea {
 
 .active {
   background-color: rgba(0, 0, 0, 0.7);
-  /* transition: ease-out; */
-  animation: ease-in;
-  animation-delay: 50ms;
+  transition: ease-in-out;
+  /* animation-delay: 500ms; */
 }
 .key:focus {
   outline: none;
